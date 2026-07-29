@@ -172,9 +172,10 @@ static void restore_codex_default_boot(void)
 static void switch_to_other_app(void)
 {
     const esp_partition_t *running = esp_ota_get_running_partition();
-    const esp_partition_t *next = esp_ota_get_next_update_partition(NULL);
+    const esp_partition_t *next = esp_partition_find_first(
+        ESP_PARTITION_TYPE_APP, ESP_PARTITION_SUBTYPE_APP_OTA_1, NULL);
     if (!running || !next || next == running) {
-        ESP_LOGE(TAG, "app switch target unavailable");
+        ESP_LOGE(TAG, "Codex partition ota_1 unavailable");
         return;
     }
     esp_err_t err = esp_ota_set_boot_partition(next);
@@ -1639,6 +1640,7 @@ static void side_triple_cb(void *handle, void *user_data)
 {
     (void)handle;
     (void)user_data;
+    ESP_LOGI(TAG, "side button triple click detected");
     queue_event(EVENT_SIDE_TRIPLE);
 }
 
@@ -1664,6 +1666,15 @@ static esp_err_t init_buttons(void)
     button_handle_t front_button = NULL;
     button_handle_t side_button = NULL;
     const button_config_t button_config = {0};
+    const button_config_t side_button_config = {
+        /*
+         * A 180 ms inter-click window is too short for a deliberate triple
+         * press on the recessed side key. Use a wider side-button-only window
+         * while leaving the front button timing unchanged.
+         */
+        .short_press_time = 380,
+        .long_press_time = 500,
+    };
     const button_gpio_config_t front_config = {
         .gpio_num = PIN_BUTTON_FRONT,
         .active_level = 0,
@@ -1685,7 +1696,7 @@ static esp_err_t init_buttons(void)
         .enable_power_save = false,
     };
     ESP_RETURN_ON_ERROR(
-        iot_button_new_gpio_device(&button_config, &side_config, &side_button),
+        iot_button_new_gpio_device(&side_button_config, &side_config, &side_button),
         TAG, "side button");
     ESP_RETURN_ON_ERROR(
         iot_button_register_cb(side_button, BUTTON_SINGLE_CLICK, NULL, side_single_cb, NULL),
