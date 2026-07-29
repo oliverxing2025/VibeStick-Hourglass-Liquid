@@ -1,0 +1,13 @@
+VibeStick Hourglass Liquid
+Copyright (c) 2026 Oliver Xing
+
+The original project code and documentation are licensed under the MIT License.
+
+This repository also includes Bosch Sensortec BMI270 driver sources under:
+
+  firmware/sticks3/third_party/bmi270/
+
+Those files are Copyright (c) 2023 Bosch Sensortec GmbH and are distributed
+under the BSD-3-Clause license contained in:
+
+  firmware/sticks3/third_party/bmi270/LICENSE

@@ -1,0 +1,24 @@
+name: Bug report
+description: Report a reproducible firmware problem
+title: "[Bug] "
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: Describe what happened and what you expected.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Reproduction steps
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: Include hardware and ESP-IDF version, but remove private paths, serial identifiers, and credentials.
+    validations:
+      required: true
